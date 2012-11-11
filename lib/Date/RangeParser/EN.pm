@@ -6,7 +6,7 @@ use warnings;
 use Date::Manip;
 use DateTime;
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 NAME
 
@@ -157,6 +157,7 @@ More formally, this will parse the following kinds of date strings:
           September, October, November, or Decmeber or any 3-letter abbreviation
   YEAR : a 4-digit year (2-digits will not work)
   RANGE : any date range that can be parsed by parse_range
+  ELEMENT : any element of a date range that can be parsed by parse_range
 
   today                             : today, midnight to midnight
 
@@ -265,6 +266,9 @@ More formally, this will parse the following kinds of date strings:
 
   RANGE-RANGE                       : the very start of the first range to the very end of the second
   10/10-10/20                         (ranges must not contain hyphens, "-")
+
+  since ELEMENT                     : the date specified in the ELEMENT to the end of the current day
+  since last Sunday
 
 Anything else is parsed by L<Date::Manip>. If Date::Manip is unable to parse the
 date given either, then the dates returned will be undefined.
@@ -639,6 +643,16 @@ sub parse_range
         (undef, $end) = $self->parse_range($second);
     }
 
+    elsif ($string =~ /^since /i) {
+        $string =~ s/^since //i;
+        ($beg) = $self->parse_range($string);
+        # Merriam-Webster defines since as "from a definite past time until now",
+        # thus $end is the end of the day today and not infinity.
+        $end = $self->_now()->clone->set(hour => 23, minute => 59, second => 59);
+    }
+
+    # TODO: Support "after [date]". This requires handling of infinite dates.
+
     # See if this is a range between two other dates separated by -
     elsif ($string !~ /^\d+-\d+$/ and $string =~ /^[^-]+-[^-]+$/) 
     {
@@ -782,9 +796,13 @@ L<DateTime>, L<Date::Manip>
 
 =head1 AUTHORS
 
-This module was authored by Grant Street Group (L<http://grantstreet.com>), which was kind enough to give it back to the Perl community.
+This module was authored by Grant Street Group (L<http://grantstreet.com>), who were kind enough to give it back to the Perl community.
 
 The CPAN distribution is maintained by Michael Aquilina (aquilina@cpan.org).
+
+=head1 THANK YOU
+
+Thanks to Sterling Hanenkamp for adding support for explicit date ranges, improved parsing, and improving the documentation.
 
 =head1 COPYRIGHT AND LICENSE
 

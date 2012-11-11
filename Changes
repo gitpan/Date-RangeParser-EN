@@ -1,5 +1,9 @@
 Revision history for Perl extension Date::RangeParser::EN
 
+0.05  Sun Nov 11 13:31:10 2012
+    - Support "since [element]"
+    - Fix case where unit tests would fail on older versions of Date::Manip
+
 0.04  Wed Sep 19 11:43:36 2012
     - Add support for parsing months followed by a 4-digit year, like 
       August 2012
@@ -10,9 +14,6 @@ Revision history for Perl extension Date::RangeParser::EN
     - The now_callback is used to set the ForceDate setting of Date::Manip when
       falling back to Date::Manip for parsing. Care has been taken to make sure
       this happens correctly for DM5 and DM6
-
-0.03  Fri Jul 27 17:24:12 2012
-    - placeholder release to fix PAUSE indexer issue
 
 0.02  Fri Jul 27 17:24:12 2012
     - fix POD bugs
